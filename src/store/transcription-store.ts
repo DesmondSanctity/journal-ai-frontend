@@ -30,6 +30,8 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
  },
 
  sendAudioRecording: async (audioUrl: string) => {
+  console.log('Sending audio recording:', audioUrl);
+
   const { token, user } = useAuthStore.getState();
   const userId = user?.id;
 
@@ -49,6 +51,10 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
      body: JSON.stringify({ audioUrl }),
     }
    );
+
+   if (!response.ok) {
+    throw new Error('Transcription request failed');
+   }
 
    const data = await response.json();
    set({
