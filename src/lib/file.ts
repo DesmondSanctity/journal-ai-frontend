@@ -1,3 +1,4 @@
+import { CLOUDINARY_API_KEY } from '@/constants';
 import { useAuthStore } from '@/store/auth-store';
 
 export async function saveAudioFile(blob: Blob, filename: string) {
@@ -5,7 +6,7 @@ export async function saveAudioFile(blob: Blob, filename: string) {
  const userId = user?.id;
  const timestamp = Date.now();
 
- const pubKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
+ const pubKey = CLOUDINARY_API_KEY;
  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
  const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
