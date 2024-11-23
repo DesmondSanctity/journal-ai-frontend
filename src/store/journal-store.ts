@@ -1,4 +1,6 @@
+import { API_URL } from '@/constants';
 import { create } from 'zustand';
+import { useAuthStore } from './auth-store';
 
 interface JournalState {
  entries: Array<{
@@ -21,11 +23,15 @@ interface JournalState {
 export const useJournalStore = create<JournalState>((set) => ({
  entries: [],
  addEntry: async (entry) => {
-  const response = await fetch('http://localhost:8787/api/journal', {
+  const token = useAuthStore.getState().token;
+
+  if (!token) return;
+
+  const response = await fetch(`${API_URL}/journal`, {
    method: 'POST',
    headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('auth-storage')}`,
+    Authorization: `Bearer ${token}`,
    },
    body: JSON.stringify(entry),
   });
@@ -33,7 +39,7 @@ export const useJournalStore = create<JournalState>((set) => ({
   set((state) => ({ entries: [...state.entries, newEntry] }));
  },
  fetchEntries: async () => {
-  const response = await fetch('http://localhost:8787/api/journal', {
+  const response = await fetch(`${API_URL}/journal`, {
    headers: {
     Authorization: `Bearer ${localStorage.getItem('auth-storage')}`,
    },

@@ -1,19 +1,23 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranscriptionStore } from '@/store/transcription-store';
-import { Mic, Square, AudioWaveform } from 'lucide-react';
+import { Mic, Square, AudioWaveform, Play, Send } from 'lucide-react';
 
 export function AudioRecorder() {
  const mediaRecorder = useRef<MediaRecorder | null>(null);
+ const audioChunks = useRef<Blob[]>([]);
+ const audioPlayer = useRef<HTMLAudioElement | null>(null);
+ const [canPlay, setCanPlay] = useState(false);
+
  const {
-  startWebSocket,
-  sendAudioChunk,
-  endSession,
+  sendAudioRecording,
+  setAudioBlob,
+  audioBlob,
   transcribedText,
-  isConnected,
   isRecording,
+  isSending,
   setIsRecording,
  } = useTranscriptionStore();
 
@@ -21,37 +25,68 @@ export function AudioRecorder() {
   e.preventDefault();
   if (!isRecording) {
    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-   mediaRecorder.current = new MediaRecorder(stream, {
-    mimeType: 'audio/webm',
-   });
+   mediaRecorder.current = new MediaRecorder(stream);
+   audioChunks.current = [];
 
-   await startWebSocket();
-   setIsRecording(true);
-
-   mediaRecorder.current.start(1000);
    mediaRecorder.current.ondataavailable = (event) => {
-    sendAudioChunk(event.data);
+    audioChunks.current.push(event.data);
    };
+
+   mediaRecorder.current.onstop = () => {
+    const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+    setAudioBlob(audioBlob);
+    setCanPlay(true);
+   };
+
+   setIsRecording(true);
+   mediaRecorder.current.start();
   } else {
-   mediaRecorder.current?.stop();
-   setIsRecording(false);
-   endSession();
+   handleStopRecording();
   }
  };
 
+ const handleStopRecording = () => {
+  mediaRecorder.current?.stop();
+  setIsRecording(false);
+  mediaRecorder.current?.stream.getTracks().forEach((track) => track.stop());
+ };
+
+ const handlePlayback = () => {
+  if (audioBlob) {
+   const audioUrl = URL.createObjectURL(audioBlob);
+   audioPlayer.current = new Audio(audioUrl);
+   audioPlayer.current.play();
+  }
+ };
+
+ const handleSubmit = async () => {
+  if (audioBlob) {
+   await sendAudioRecording(audioBlob);
+  }
+ };
+
+ useEffect(() => {
+  return () => {
+   if (mediaRecorder.current?.state === 'recording') {
+    mediaRecorder.current.stop();
+   }
+   if (audioPlayer.current) {
+    audioPlayer.current.pause();
+   }
+  };
+ }, []);
+
  return (
   <div className='space-y-4'>
-   <div className='flex items-center justify-between'>
+   <div className='flex items-center gap-2'>
     <Button
      onClick={handleRecording}
      variant={isRecording ? 'destructive' : 'default'}
-     className={`w-full flex items-center gap-2 transition-all duration-300 ${
-      isRecording ? 'animate-pulse shadow-lg' : 'hover:scale-[1.02]'
-     }`}
+     className='flex items-center gap-2'
     >
      {isRecording ? (
       <>
-       <Square className='h-4 w-4 animate-spin' />
+       <Square className='h-4 w-4' />
        Stop Recording
       </>
      ) : (
@@ -61,15 +96,28 @@ export function AudioRecorder() {
       </>
      )}
     </Button>
+
+    {canPlay && !isRecording && (
+     <>
+      <Button onClick={handlePlayback} variant='outline'>
+       <Play className='h-4 w-4 mr-2' />
+       Play
+      </Button>
+      <Button onClick={handleSubmit} disabled={isSending} variant='default'>
+       <Send className='h-4 w-4 mr-2' />
+       {isSending ? 'Sending...' : 'Send'}
+      </Button>
+     </>
+    )}
    </div>
 
-   {isConnected && (
+   {isRecording && (
     <div className='flex items-center gap-2 animate-fade-in'>
      <div className='flex gap-1'>
       {[...Array(3)].map((_, i) => (
        <div
         key={i}
-        className={`h-2 w-2 rounded-full bg-green-500 animate-bounce`}
+        className='h-2 w-2 rounded-full bg-green-500 animate-bounce'
         style={{ animationDelay: `${i * 0.2}s` }}
        />
       ))}

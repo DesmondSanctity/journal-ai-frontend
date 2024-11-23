@@ -1,3 +1,4 @@
+import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -18,7 +19,7 @@ export const useAuthStore = create<AuthState>()(
    token: null,
    user: null,
    login: async (email, password) => {
-    const response = await fetch('http://localhost:8787/api/auth/login', {
+    const response = await fetch(`${API_URL}/auth/login`, {
      method: 'POST',
      headers: { 'Content-Type': 'application/json' },
      body: JSON.stringify({ email, password }),
@@ -27,7 +28,7 @@ export const useAuthStore = create<AuthState>()(
     set({ token: data.token, user: data.user });
    },
    register: async (name, email, password) => {
-    const response = await fetch('http://localhost:8787/api/auth/register', {
+    const response = await fetch(`${API_URL}/auth/register`, {
      method: 'POST',
      headers: { 'Content-Type': 'application/json' },
      body: JSON.stringify({ name, email, password }),

@@ -38,6 +38,8 @@ export function LoginForm() {
   try {
    setIsLoading(true);
    await login(values.email, values.password);
+   // Handle successful login here
+   window.location.href = '/dashboard/journal';
   } catch (error) {
    console.error(error);
   } finally {

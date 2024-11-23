@@ -5,6 +5,7 @@ import { UserNav } from '@/components/dashboard/user-nav';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function DashboardLayout({
  children,
@@ -28,7 +29,11 @@ export default function DashboardLayout({
         >
          <Menu className='h-5 w-5' />
         </Button>
-        <div className='text-xl sm:text-2xl font-bold'>Journal AI</div>
+        <div className='text-xl sm:text-2xl font-bold'>
+         <Link href='/dashboard/journal'>
+          <div>Journal AI</div>
+         </Link>
+        </div>
        </div>
        <div className='hidden md:flex flex-1'>
         <DashboardNav />

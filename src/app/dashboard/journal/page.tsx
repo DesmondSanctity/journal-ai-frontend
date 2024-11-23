@@ -52,7 +52,7 @@ export default function JournalPage() {
    <div className='lg:col-span-2 space-y-6'>
     <Card>
      <CardHeader>
-      <CardTitle>Today's Journal</CardTitle>
+      <CardTitle>Today&apos;s Journal</CardTitle>
      </CardHeader>
      <CardContent>
       <Input placeholder='Give your journal entry a title...' />
