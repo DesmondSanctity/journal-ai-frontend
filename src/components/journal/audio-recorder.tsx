@@ -25,8 +25,19 @@ export function AudioRecorder() {
  const handleRecording = async (e: React.MouseEvent) => {
   e.preventDefault();
   if (!isRecording) {
+   // Stop any playing audio
+   if (audioPlayer.current) {
+    audioPlayer.current.pause();
+    audioPlayer.current = null;
+   }
+   setIsPlaying(false);
+   setCanPlay(false);
+   setAudioBlob(new Blob()); // Initialize with an empty Blob instead of null
+
    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-   mediaRecorder.current = new MediaRecorder(stream);
+   mediaRecorder.current = new MediaRecorder(stream, {
+    mimeType: 'audio/webm;codecs=opus',
+   });
    audioChunks.current = [];
 
    mediaRecorder.current.ondataavailable = (event) => {
@@ -34,7 +45,9 @@ export function AudioRecorder() {
    };
 
    mediaRecorder.current.onstop = () => {
-    const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+    const audioBlob = new Blob(audioChunks.current, {
+     type: 'audio/webm;codecs=opus',
+    });
     setAudioBlob(audioBlob);
     setCanPlay(true);
    };
@@ -45,7 +58,6 @@ export function AudioRecorder() {
    handleStopRecording();
   }
  };
-
  const handleStopRecording = () => {
   mediaRecorder.current?.stop();
   setIsRecording(false);
