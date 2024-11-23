@@ -36,6 +36,8 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
   if (!userId || !token) return;
 
   const formData = new FormData();
+  // Log blob before sending
+  console.log('Sending blob size:', audioBlob.size);
   formData.append('audio', audioBlob, 'recording.webm');
 
   set({ isSending: true });

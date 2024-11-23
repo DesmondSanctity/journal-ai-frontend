@@ -45,15 +45,21 @@ export function AudioRecorder() {
    };
 
    mediaRecorder.current.onstop = () => {
+    // Log the chunks size to verify data
+    console.log('Chunks size:', audioChunks.current.length);
+
     const audioBlob = new Blob(audioChunks.current, {
      type: 'audio/webm;codecs=opus',
     });
+    
+    // Log blob size
+    console.log('Blob size:', audioBlob.size);
     setAudioBlob(audioBlob);
     setCanPlay(true);
    };
 
    setIsRecording(true);
-   mediaRecorder.current.start();
+   mediaRecorder.current.start(100);
   } else {
    handleStopRecording();
   }
