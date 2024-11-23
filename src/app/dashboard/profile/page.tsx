@@ -21,9 +21,8 @@ const mockUserData = {
 
 export default function ProfilePage() {
  const user = useAuthStore((state) => state.user);
- if(!user) return null;
+ if (!user) return null;
 
- const date = new Date(user?.createdAt).toISOString();
  return (
   <div className='space-y-6'>
    <Card>
