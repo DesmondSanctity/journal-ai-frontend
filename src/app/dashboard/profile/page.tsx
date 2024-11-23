@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Clock, FileText, Settings } from 'lucide-react';
+import { useAuthStore } from '@/store/auth-store';
+import { formatDistanceToNow } from 'date-fns';
 
 const mockUserData = {
  name: 'Alex Johnson',
@@ -18,6 +20,10 @@ const mockUserData = {
 };
 
 export default function ProfilePage() {
+ const user = useAuthStore((state) => state.user);
+ if(!user) return null;
+
+ const date = new Date(user?.createdAt).toISOString();
  return (
   <div className='space-y-6'>
    <Card>
@@ -25,16 +31,23 @@ export default function ProfilePage() {
      <div className='flex items-center gap-6'>
       <Avatar className='h-20 w-20'>
        <AvatarImage src='/avatars/user.png' />
-       <AvatarFallback>AJ</AvatarFallback>
+       <AvatarFallback>
+        {user?.name
+         ?.split(' ')
+         .map((part) => part[0])
+         .join('')
+         .toUpperCase()
+         .slice(0, 2)}
+       </AvatarFallback>
       </Avatar>
       <div>
-       <h1 className='text-2xl font-bold'>{mockUserData.name}</h1>
+       <h1 className='text-2xl font-bold'>{user?.name}</h1>
        <div className='flex items-center gap-2 mt-1'>
-        <span className='text-muted-foreground'>{mockUserData.email}</span>
-        <Badge>{mockUserData.role}</Badge>
+        <span className='text-muted-foreground'>{user?.email}</span>
+        <Badge>{user?.role}</Badge>
        </div>
        <p className='text-sm text-muted-foreground mt-1'>
-        Member since {mockUserData.joinedDate}
+        Member since {formatDistanceToNow(new Date(user?.createdAt))} ago
        </p>
       </div>
      </div>

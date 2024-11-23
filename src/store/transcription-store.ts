@@ -30,12 +30,10 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
  },
 
  sendAudioRecording: async (audioBlob: Blob) => {
-  const token =
-   useAuthStore.getState().token;
-  const userId =
-   useAuthStore.getState().user?.id;
+  const { token, user } = useAuthStore.getState();
+  const userId = user?.id;
 
-  if (!userId) return;
+  if (!userId || !token) return;
 
   const formData = new FormData();
   formData.append('audio', audioBlob, 'recording.webm');

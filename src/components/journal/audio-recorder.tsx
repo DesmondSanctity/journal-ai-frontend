@@ -3,13 +3,14 @@
 import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranscriptionStore } from '@/store/transcription-store';
-import { Mic, Square, AudioWaveform, Play, Send } from 'lucide-react';
+import { Mic, Square, AudioWaveform, Play, Send, Pause } from 'lucide-react';
 
 export function AudioRecorder() {
  const mediaRecorder = useRef<MediaRecorder | null>(null);
  const audioChunks = useRef<Blob[]>([]);
  const audioPlayer = useRef<HTMLAudioElement | null>(null);
  const [canPlay, setCanPlay] = useState(false);
+ const [isPlaying, setIsPlaying] = useState(false);
 
  const {
   sendAudioRecording,
@@ -52,11 +53,21 @@ export function AudioRecorder() {
  };
 
  const handlePlayback = () => {
-  if (audioBlob) {
-   const audioUrl = URL.createObjectURL(audioBlob);
-   audioPlayer.current = new Audio(audioUrl);
-   audioPlayer.current.play();
+  if (!audioPlayer.current) {
+   if (audioBlob) {
+    const audioUrl = URL.createObjectURL(audioBlob);
+    audioPlayer.current = new Audio(audioUrl);
+    audioPlayer.current.addEventListener('ended', () => setIsPlaying(false));
+   }
   }
+
+  if (isPlaying) {
+   audioPlayer.current?.pause();
+  } else {
+   audioPlayer.current?.play();
+  }
+
+  setIsPlaying(!isPlaying);
  };
 
  const handleSubmit = async () => {
@@ -78,7 +89,7 @@ export function AudioRecorder() {
 
  return (
   <div className='space-y-4'>
-   <div className='flex items-center gap-2'>
+   <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
     <Button
      onClick={handleRecording}
      variant={isRecording ? 'destructive' : 'default'}
@@ -99,11 +110,29 @@ export function AudioRecorder() {
 
     {canPlay && !isRecording && (
      <>
-      <Button onClick={handlePlayback} variant='outline'>
-       <Play className='h-4 w-4 mr-2' />
-       Play
+      <Button
+       onClick={handlePlayback}
+       variant='outline'
+       className='w-full sm:w-auto'
+      >
+       {isPlaying ? (
+        <>
+         <Pause className='h-4 w-4 mr-2' />
+         Pause
+        </>
+       ) : (
+        <>
+         <Play className='h-4 w-4 mr-2' />
+         Play
+        </>
+       )}
       </Button>
-      <Button onClick={handleSubmit} disabled={isSending} variant='default'>
+      <Button
+       onClick={handleSubmit}
+       disabled={isSending}
+       variant='default'
+       className='w-full sm:w-auto'
+      >
        <Send className='h-4 w-4 mr-2' />
        {isSending ? 'Sending...' : 'Send'}
       </Button>

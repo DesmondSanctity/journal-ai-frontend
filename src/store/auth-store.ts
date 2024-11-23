@@ -1,12 +1,15 @@
 import { API_URL } from '@/constants';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface AuthState {
  token: string | null;
  user: {
   id: string;
   email: string;
+  name: string;
+  role: string;
+  createdAt: string;
  } | null;
  login: (email: string, password: string) => Promise<void>;
  register: (name: string, email: string, password: string) => Promise<void>;
@@ -25,7 +28,7 @@ export const useAuthStore = create<AuthState>()(
      body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
-    set({ token: data.token, user: data.user });
+    set({ token: data.data.token, user: data.data.user });
    },
    register: async (name, email, password) => {
     const response = await fetch(`${API_URL}/auth/register`, {
@@ -36,10 +39,27 @@ export const useAuthStore = create<AuthState>()(
     const data = await response.json();
     set({ token: data.token, user: data.user });
    },
-   logout: () => set({ token: null, user: null }),
+   logout: () => {
+    set({ token: null, user: null });
+    window.location.href = '/auth/login';
+   },
   }),
   {
    name: 'auth-storage',
+   storage: createJSONStorage(() => ({
+    getItem: (name) => {
+     const cookie = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(name));
+     return cookie ? cookie.split('=')[1] : null;
+    },
+    setItem: (name, value) => {
+     document.cookie = `${name}=${value}; path=/`;
+    },
+    removeItem: (name) => {
+     document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    },
+   })),
   }
  )
 );

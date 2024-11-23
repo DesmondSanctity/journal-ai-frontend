@@ -14,8 +14,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
-import { Lock, Mail, User } from 'lucide-react';
+import { Loader2, Lock, Mail, User } from 'lucide-react';
 
 const formSchema = z.object({
  name: z.string().min(2),
@@ -24,6 +25,7 @@ const formSchema = z.object({
 });
 
 export function RegisterForm() {
+ const router = useRouter();
  const [isLoading, setIsLoading] = useState(false);
  const register = useAuthStore((state) => state.register);
 
@@ -40,6 +42,9 @@ export function RegisterForm() {
   try {
    setIsLoading(true);
    await register(values.name, values.email, values.password);
+   setTimeout(() => {
+    router.push('/auth/login');
+   }, 100);
   } catch (error) {
    console.error(error);
   } finally {
@@ -114,10 +119,17 @@ export function RegisterForm() {
     />
     <Button
      type='submit'
-     className='w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]'
+     className='w-full mt-6 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]'
      disabled={isLoading}
     >
-     {isLoading ? 'Creating account...' : 'Create account'}
+     {isLoading ? (
+      <>
+       <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+       Creating account...
+      </>
+     ) : (
+      'Create account'
+     )}
     </Button>
    </form>
   </Form>

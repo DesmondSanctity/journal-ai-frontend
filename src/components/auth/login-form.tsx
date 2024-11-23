@@ -14,8 +14,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
-import { Lock, Mail } from 'lucide-react';
+import { Loader2, Lock, Mail } from 'lucide-react';
 
 const formSchema = z.object({
  email: z.string().email(),
@@ -23,6 +24,7 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+ const router = useRouter();
  const [isLoading, setIsLoading] = useState(false);
  const login = useAuthStore((state) => state.login);
 
@@ -39,7 +41,9 @@ export function LoginForm() {
    setIsLoading(true);
    await login(values.email, values.password);
    // Handle successful login here
-   window.location.href = '/dashboard/journal';
+   setTimeout(() => {
+    router.push('/dashboard/journal');
+   }, 100);
   } catch (error) {
    console.error(error);
   } finally {
@@ -94,10 +98,17 @@ export function LoginForm() {
     />
     <Button
      type='submit'
-     className='w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]'
+     className='w-full mt-6 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]'
      disabled={isLoading}
     >
-     {isLoading ? 'Signing in...' : 'Sign in'}
+     {isLoading ? (
+      <>
+       <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+       Signing in...
+      </>
+     ) : (
+      'Sign in'
+     )}
     </Button>
    </form>
   </Form>

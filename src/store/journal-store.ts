@@ -39,9 +39,11 @@ export const useJournalStore = create<JournalState>((set) => ({
   set((state) => ({ entries: [...state.entries, newEntry] }));
  },
  fetchEntries: async () => {
+  const token = useAuthStore.getState().token;
+
   const response = await fetch(`${API_URL}/journal`, {
    headers: {
-    Authorization: `Bearer ${localStorage.getItem('auth-storage')}`,
+    Authorization: `Bearer ${token}`,
    },
   });
   const entries = await response.json();

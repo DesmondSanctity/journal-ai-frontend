@@ -3,7 +3,6 @@
 import { AudioRecorder } from '@/components/journal/audio-recorder';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { BookText, CalendarDays } from 'lucide-react';
 import { EntryHistory } from '@/components/journal/history';
 import { useState } from 'react';
@@ -55,7 +54,7 @@ export default function JournalPage() {
       <CardTitle>Today&apos;s Journal</CardTitle>
      </CardHeader>
      <CardContent>
-      <Input placeholder='Give your journal entry a title...' />
+      <h4>Make a journal entry today...</h4>
       <div className='mt-4'>
        <AudioRecorder />
       </div>
