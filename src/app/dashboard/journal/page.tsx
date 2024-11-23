@@ -3,47 +3,31 @@
 import { AudioRecorder } from '@/components/journal/audio-recorder';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookText, CalendarDays } from 'lucide-react';
+import { BookOpen, BookText, CalendarDays } from 'lucide-react';
 import { EntryHistory } from '@/components/journal/history';
-import { useState } from 'react';
-
-const mockJournalEntries = [
- {
-  id: '1',
-  title: 'Morning Standup Discussion',
-  content:
-   'Team velocity is improving. Frontend deployments are now automated. New feature requests from product team.',
-  tags: ['work', 'meetings', 'team'],
-  createdAt: new Date().toISOString(),
- },
- {
-  id: '2',
-  title: 'Product Strategy Session',
-  content:
-   'Discussed Q4 roadmap. Priority on user engagement features. Mobile app development starting next month.',
-  tags: ['strategy', 'product', 'planning'],
-  createdAt: new Date(Date.now() - 3600000).toISOString(),
- },
- {
-  id: '3',
-  title: 'Technical Architecture Review',
-  content:
-   'Evaluated microservices structure. Need to improve API documentation. Performance optimization required.',
-  tags: ['technical', 'architecture', 'planning'],
-  createdAt: new Date(Date.now() - 7200000).toISOString(),
- },
- {
-  id: '4',
-  title: 'Client Feedback Meeting',
-  content:
-   'Positive response to new UI. Some concerns about mobile performance. Schedule follow-up next week.',
-  tags: ['client', 'feedback', 'meetings'],
-  createdAt: new Date(Date.now() - 10800000).toISOString(),
- },
-];
+import { useEffect, useState } from 'react';
+import { useJournalStore } from '@/store/journal-store';
 
 export default function JournalPage() {
  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+ const { entries = [], fetchEntries } = useJournalStore();
+
+ // Filter entries for today
+ const todayEntries = Array.isArray(entries)
+  ? entries.filter((entry) => {
+     const entryDate = new Date(entry.createdAt);
+     const today = new Date();
+     return (
+      entryDate.getDate() === today.getDate() &&
+      entryDate.getMonth() === today.getMonth() &&
+      entryDate.getFullYear() === today.getFullYear()
+     );
+    })
+  : [];
+
+ useEffect(() => {
+  fetchEntries();
+ }, [fetchEntries]);
 
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
@@ -61,7 +45,19 @@ export default function JournalPage() {
      </CardContent>
     </Card>
 
-    <EntryHistory type='journal' entries={mockJournalEntries} />
+    {todayEntries.length > 0 ? (
+     <EntryHistory type='journal' entries={todayEntries} />
+    ) : (
+     <Card className='py-12'>
+      <CardContent className='flex flex-col items-center justify-center text-center'>
+       <BookOpen className='h-12 w-12 text-muted-foreground mb-4' />
+       <h3 className='text-lg font-semibold mb-2'>No Journals Yet</h3>
+       <p className='text-muted-foreground'>
+        Start recording your thoughts using the audio recorder above
+       </p>
+      </CardContent>
+     </Card>
+    )}
    </div>
 
    {/* Right Column - Calendar and Daily Summary */}
@@ -92,21 +88,15 @@ export default function JournalPage() {
      </CardHeader>
      <CardContent>
       <div className='space-y-4 text-sm'>
-       <p className='text-muted-foreground leading-relaxed'>
-        Started the day with a team standup discussing frontend deployments and
-        velocity improvements. The team shared progress on automated deployment
-        pipelines.
-       </p>
-       <p className='text-muted-foreground leading-relaxed'>
-        Had a productive strategy session about Q4 roadmap. Key focus areas
-        include enhancing user engagement features and kickstarting mobile app
-        development next month.
-       </p>
-       <p className='text-muted-foreground leading-relaxed'>
-        Wrapped up with a technical review of our microservices architecture.
-        Identified areas for API documentation improvements and performance
-        optimization opportunities.
-       </p>
+       {todayEntries.length > 0 ? (
+        <p className='text-muted-foreground leading-relaxed'>
+         {todayEntries.map((entry) => entry.excerpt).join(' \n')}
+        </p>
+       ) : (
+        <p className='text-muted-foreground leading-relaxed'>
+         No entries for today. Start by recording your thoughts above.
+        </p>
+       )}
       </div>
      </CardContent>
     </Card>

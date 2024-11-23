@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { BookText, Mic } from 'lucide-react';
+import { BookText, History } from 'lucide-react';
 
 const navItems = [
  { href: '/dashboard/journal', label: 'Journal', icon: BookText },
- { href: '/dashboard/transcribe', label: 'History', icon: Mic },
+ { href: '/dashboard/transcribe', label: 'History', icon: History },
 //  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
 ];
 

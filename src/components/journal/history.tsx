@@ -28,21 +28,20 @@ type JournalEntry = {
  title: string;
  content: string;
  tags: string[];
- createdAt: string;
-};
-
-type TranscriptionEntry = {
- id: string;
- title: string;
+ summary: string;
+ excerpt: string;
+ segments: Array<{
+  timestamp: string;
+  text: string;
+ }>;
  duration: number;
- tags: string[];
+ audioUrl: string;
  createdAt: string;
- status: 'completed' | 'processing';
 };
 
 type EntryHistoryProps = {
  type: 'journal' | 'transcription';
- entries: (JournalEntry | TranscriptionEntry)[];
+ entries: JournalEntry[];
 };
 
 type FilterState = {
@@ -81,27 +80,17 @@ function JournalCard({ entry }: { entry: JournalEntry }) {
  );
 }
 
-function TranscriptionCard({ entry }: { entry: TranscriptionEntry }) {
+function TranscriptionCard({ entry }: { entry: JournalEntry }) {
  return (
   <Card className='hover:shadow-md transition-all cursor-pointer h-full'>
    <CardHeader>
     <div className='flex justify-between items-start'>
      <div>
       <CardTitle className='line-clamp-1'>{entry.title}</CardTitle>
-      <div className='flex items-center gap-2 mt-1'>
-       <Clock className='h-4 w-4 text-muted-foreground' />
-       <span className='text-sm text-muted-foreground'>
-        {Math.floor(entry.duration / 60)}m {entry.duration % 60}s
-       </span>
-      </div>
+      <p className='text-sm text-muted-foreground'>
+       {formatDistanceToNow(new Date(entry.createdAt))} ago
+      </p>
      </div>
-     <Badge variant={entry.status === 'completed' ? 'secondary' : 'outline'}>
-      {entry.status}
-     </Badge>
-    </div>
-   </CardHeader>
-   <CardContent>
-    <div className='flex items-center justify-between'>
      <div className='flex gap-2'>
       {entry.tags.map((tag) => (
        <Badge key={tag} variant='secondary'>
@@ -109,8 +98,12 @@ function TranscriptionCard({ entry }: { entry: TranscriptionEntry }) {
        </Badge>
       ))}
      </div>
-     <AudioWaveformIcon className='h-4 w-4 text-muted-foreground' />
     </div>
+   </CardHeader>
+   <CardContent>
+    <p className='text-sm text-muted-foreground line-clamp-2'>
+     {entry.content}
+    </p>
    </CardContent>
   </Card>
  );
@@ -322,7 +315,7 @@ export function EntryHistory({ type, entries }: EntryHistoryProps) {
       {type === 'journal' ? (
        <JournalCard entry={entry as JournalEntry} />
       ) : (
-       <TranscriptionCard entry={entry as TranscriptionEntry} />
+       <TranscriptionCard entry={entry as JournalEntry} />
       )}
      </Link>
     ))}
