@@ -1,9 +1,6 @@
 'use client';
 
 import { EntryHistory } from '@/components/journal/history';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
 
 const mockTranscriptionEntries = [
  {

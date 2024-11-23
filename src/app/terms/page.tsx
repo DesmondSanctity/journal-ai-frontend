@@ -1,5 +1,3 @@
-import { Footer } from '@/components/shared/footer';
-import { Nav } from '@/components/shared/nav';
 import { PageWrapper } from '@/components/shared/page-wrapper';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Check, FileText } from 'lucide-react';

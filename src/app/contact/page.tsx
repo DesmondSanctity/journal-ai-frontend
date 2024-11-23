@@ -1,7 +1,5 @@
 'use client';
 
-import { Footer } from '@/components/shared/footer';
-import { Nav } from '@/components/shared/nav';
 import { PageWrapper } from '@/components/shared/page-wrapper';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +27,7 @@ export default function ContactPage() {
       <div className='text-center'>
        <h1 className='text-3xl font-bold'>Get in Touch</h1>
        <p className='mt-2 text-muted-foreground'>
-        Have questions about Journal AI? We're here to help you transform your
+        Have questions about Journal AI? We&apos;re here to help you transform your
         journaling experience.
        </p>
       </div>

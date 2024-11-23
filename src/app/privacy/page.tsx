@@ -1,5 +1,3 @@
-import { Footer } from '@/components/shared/footer';
-import { Nav } from '@/components/shared/nav';
 import { PageWrapper } from '@/components/shared/page-wrapper';
 import { Database, Lock, Shield } from 'lucide-react';
 

@@ -17,7 +17,7 @@ import {
  SelectTrigger,
  SelectValue,
 } from '@/components/ui/select';
-import { Bell, Moon, Volume2 } from 'lucide-react';
+import { Bell, Volume2 } from 'lucide-react';
 
 export default function SettingsPage() {
  return (
