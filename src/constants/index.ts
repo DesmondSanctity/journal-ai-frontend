@@ -1,1 +1,1 @@
-export const API_URL = 'https://journal-ai-backend.0xanon.workers.dev/api';
+export const API_URL = 'https://athene-ai.0xanon.workers.dev/api';
