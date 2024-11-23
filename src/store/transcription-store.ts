@@ -8,7 +8,7 @@ interface TranscriptionState {
  audioBlob: Blob | null;
  isRecording: boolean;
  isSending: boolean;
- sendAudioRecording: (audioBlob: Blob) => Promise<void>;
+ sendAudioRecording: (audioUrl: string) => Promise<void>;
  setIsRecording: (value: boolean) => void;
  setAudioBlob: (blob: Blob) => void;
  resetState: () => void;
@@ -29,16 +29,11 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
   set({ audioBlob: blob });
  },
 
- sendAudioRecording: async (audioBlob: Blob) => {
+ sendAudioRecording: async (audioUrl: string) => {
   const { token, user } = useAuthStore.getState();
   const userId = user?.id;
 
   if (!userId || !token) return;
-
-  const formData = new FormData();
-  // Log blob before sending
-  console.log('Sending blob size:', audioBlob.size);
-  formData.append('audio', audioBlob, 'recording.webm');
 
   set({ isSending: true });
 
@@ -49,8 +44,9 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
      method: 'POST',
      headers: {
       Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
      },
-     body: formData,
+     body: JSON.stringify({ audioUrl }),
     }
    );
 

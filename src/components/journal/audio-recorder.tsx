@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranscriptionStore } from '@/store/transcription-store';
 import { Mic, Square, AudioWaveform, Play, Send, Pause } from 'lucide-react';
+import { saveAudioFile } from '@/lib/file';
 
 export function AudioRecorder() {
  const mediaRecorder = useRef<MediaRecorder | null>(null);
@@ -32,7 +33,7 @@ export function AudioRecorder() {
    }
    setIsPlaying(false);
    setCanPlay(false);
-   setAudioBlob(new Blob()); // Initialize with an empty Blob instead of null
+   setAudioBlob(new Blob());
 
    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
    mediaRecorder.current = new MediaRecorder(stream, {
@@ -44,22 +45,16 @@ export function AudioRecorder() {
     audioChunks.current.push(event.data);
    };
 
-   mediaRecorder.current.onstop = () => {
-    // Log the chunks size to verify data
-    console.log('Chunks size:', audioChunks.current.length);
-
+   mediaRecorder.current.onstop = async () => {
     const audioBlob = new Blob(audioChunks.current, {
      type: 'audio/webm;codecs=opus',
     });
-    
-    // Log blob size
-    console.log('Blob size:', audioBlob.size);
     setAudioBlob(audioBlob);
     setCanPlay(true);
    };
 
    setIsRecording(true);
-   mediaRecorder.current.start(100);
+   mediaRecorder.current.start();
   } else {
    handleStopRecording();
   }
@@ -90,7 +85,10 @@ export function AudioRecorder() {
 
  const handleSubmit = async () => {
   if (audioBlob) {
-   await sendAudioRecording(audioBlob);
+   const audioUrl = await saveAudioFile(audioBlob, 'journal.webm');
+   await sendAudioRecording(audioUrl);
+   setCanPlay(false);
+   setAudioBlob(new Blob());
   }
  };
 
