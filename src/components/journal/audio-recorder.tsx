@@ -85,7 +85,7 @@ export function AudioRecorder() {
 
  const handleSubmit = async () => {
   if (audioBlob) {
-   const audioUrl = await saveAudioFile(audioBlob, 'journal.webm');
+   const audioUrl = await saveAudioFile(audioBlob);
    await sendAudioRecording(audioUrl);
    setCanPlay(false);
    setAudioBlob(new Blob());

@@ -1,7 +1,7 @@
 import { CLOUDINARY_API_KEY } from '@/constants';
 import { useAuthStore } from '@/store/auth-store';
 
-export async function saveAudioFile(blob: Blob, filename: string) {
+export async function saveAudioFile(blob: Blob) {
  const { user } = useAuthStore.getState();
  const userId = user?.id;
  const timestamp = Date.now();
