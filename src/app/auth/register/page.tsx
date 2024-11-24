@@ -14,7 +14,7 @@ export default function RegisterPage() {
   <div className='min-h-screen flex items-center justify-center bg-gray-50'>
    <div className='w-full max-w-md px-4'>
     <div className='text-center mb-8'>
-     <h1 className='text-3xl font-bold'>Journal AI</h1>
+     <h1 className='text-3xl font-bold'>Athene AI</h1>
      <p className='text-muted-foreground mt-2'>Start your journaling journey</p>
     </div>
     <Card className='w-full transition-all duration-200 hover:shadow-lg'>

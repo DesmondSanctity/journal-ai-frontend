@@ -31,7 +31,7 @@ export default function DashboardLayout({
         </Button>
         <div className='text-xl sm:text-2xl font-bold'>
          <Link href='/dashboard/journal'>
-          <div>Journal AI</div>
+          <div>Athene AI</div>
          </Link>
         </div>
        </div>
@@ -58,7 +58,7 @@ export default function DashboardLayout({
     <div className='mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8'>
      <div className='flex h-14 items-center justify-between text-xs sm:text-sm'>
       <p className='text-muted-foreground'>Built with Next.js and Tailwind</p>
-      <p className='text-muted-foreground'>© 2024 Journal AI</p>
+      <p className='text-muted-foreground'>© 2024 Athene AI</p>
      </div>
     </div>
    </footer>

@@ -15,11 +15,11 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
- title: 'Journal AI - Voice Journaling Assistant',
+ title: 'Athene AI - Voice Journaling Assistant',
  description:
   'Transform your spoken thoughts into organized journal entries with AI',
  openGraph: {
-  title: 'Journal AI - Voice Journaling Assistant',
+  title: 'Athene AI - Voice Journaling Assistant',
   description:
    'Transform your spoken thoughts into organized journal entries with AI',
   images: ['/og-image.jpg'],
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
  },
  twitter: {
   card: 'summary_large_image',
-  title: 'Journal AI - Voice Journaling Assistant',
+  title: 'Athene AI - Voice Journaling Assistant',
   description:
    'Transform your spoken thoughts into organized journal entries with AI',
   images: ['/og-image.jpg'],

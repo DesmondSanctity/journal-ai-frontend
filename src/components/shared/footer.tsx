@@ -6,7 +6,7 @@ export function Footer() {
    <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
     <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
      <div className='text-sm text-muted-foreground'>
-      © 2024 Journal AI. All rights reserved.
+      © 2024 Athene AI. All rights reserved.
      </div>
      <div className='flex items-center gap-6 text-sm text-muted-foreground'>
       <Link href='/privacy'>Privacy</Link>

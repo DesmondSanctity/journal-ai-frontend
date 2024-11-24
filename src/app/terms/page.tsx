@@ -11,7 +11,7 @@ export default function TermsPage() {
       <div className='text-center mb-12'>
        <h1 className='text-4xl font-bold'>Terms & Conditions</h1>
        <p className='mt-4 text-muted-foreground'>
-        Please read these terms carefully before using Journal AI.
+        Please read these terms carefully before using Athene AI.
        </p>
       </div>
 

@@ -27,8 +27,8 @@ export default function ContactPage() {
       <div className='text-center'>
        <h1 className='text-3xl font-bold'>Get in Touch</h1>
        <p className='mt-2 text-muted-foreground'>
-        Have questions about Journal AI? We&apos;re here to help you transform your
-        journaling experience.
+        Have questions about Athene AI? We&apos;re here to help you transform
+        your journaling experience.
        </p>
       </div>
 
