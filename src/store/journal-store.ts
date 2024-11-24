@@ -2,7 +2,7 @@ import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { useAuthStore } from './auth-store';
 import { persist } from 'zustand/middleware';
-import { deleteAudioFile } from '@/lib/file';
+// import { deleteAudioFile } from '@/lib/file';
 
 interface JournalState {
  entries: Array<{
@@ -71,7 +71,7 @@ export const useJournalStore = create<JournalState>()(
     });
 
     // Delete audio file from Cloudinary
-    await deleteAudioFile(audioUrl);
+    // await deleteAudioFile(audioUrl);
 
     // Update local state
     set((state) => ({
