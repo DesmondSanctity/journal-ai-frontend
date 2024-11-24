@@ -4,6 +4,8 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranscriptionStore } from '@/store/transcription-store';
 import { Mic, Square, AudioWaveform, Play, Send, Pause } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useJournalStore } from '@/store/journal-store';
 
 export function AudioRecorder() {
  const mediaRecorder = useRef<MediaRecorder | null>(null);
@@ -25,6 +27,24 @@ export function AudioRecorder() {
 
  const handleRecording = async (e: React.MouseEvent) => {
   e.preventDefault();
+
+  // Get today's entries
+  const todayEntries = useJournalStore.getState().entries.filter((entry) => {
+   const entryDate = new Date(entry.createdAt);
+   const today = new Date();
+   return (
+    entryDate.getDate() === today.getDate() &&
+    entryDate.getMonth() === today.getMonth() &&
+    entryDate.getFullYear() === today.getFullYear()
+   );
+  });
+
+  // Check limit (example: 5 entries per day)
+  if (todayEntries.length >= 5) {
+   toast.error('Daily entry limit reached. Try again tomorrow!');
+   return;
+  }
+
   if (!isRecording) {
    // Stop any playing audio
    if (audioPlayer.current) {
@@ -172,7 +192,7 @@ export function AudioRecorder() {
        className='w-full sm:w-auto'
       >
        <Send className='h-4 w-4 mr-2' />
-       {isSending ? 'Sending...' : 'Send'}
+       {isSending ? 'Transcribing...' : 'Transcribe'}
       </Button>
      </>
     )}

@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { BookText, History } from 'lucide-react';
+import { BarChart2, BookText, History } from 'lucide-react';
 
 const navItems = [
  { href: '/dashboard/journal', label: 'Journal', icon: BookText },
  { href: '/dashboard/transcribe', label: 'History', icon: History },
-//  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
+ { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
 ];
 
 export function DashboardNav() {

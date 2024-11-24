@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAnalyticsStore } from '@/store/analytics-store';
 import { Clock, FileText, Tags, Activity } from 'lucide-react';
 import {
  LineChart,
@@ -14,48 +15,8 @@ import {
  ResponsiveContainer,
 } from 'recharts';
 
-const mockMetrics = {
- totalTime: '47.2 hours',
- totalEntries: 156,
- avgDuration: '18.2 mins',
- topTags: ['meeting', 'technical', 'client'],
-};
-
-const mockActivityData = [
- { day: 'Mon', entries: 12 },
- { day: 'Tue', entries: 8 },
- { day: 'Wed', entries: 15 },
- { day: 'Thu', entries: 10 },
- { day: 'Fri', entries: 13 },
- { day: 'Sat', entries: 5 },
- { day: 'Sun', entries: 4 },
-];
-
-// Add these mock data
-const mockSentimentData = [
- { month: 'Jan', positive: 65, neutral: 25, negative: 10 },
- { month: 'Feb', positive: 70, neutral: 20, negative: 10 },
- { month: 'Mar', positive: 60, neutral: 30, negative: 10 },
- { month: 'Apr', positive: 75, neutral: 15, negative: 10 },
-];
-
-const mockTopicsData = [
- { topic: 'Product Development', count: 45 },
- { topic: 'Team Collaboration', count: 38 },
- { topic: 'Client Meetings', count: 32 },
- { topic: 'Technical Reviews', count: 28 },
- { topic: 'Strategy Planning', count: 25 },
-];
-
-const mockWordFrequency = [
- { word: 'integration', frequency: 87 },
- { word: 'deployment', frequency: 76 },
- { word: 'testing', frequency: 65 },
- { word: 'feedback', frequency: 54 },
- { word: 'milestone', frequency: 43 },
-];
-
 export default function AnalyticsPage() {
+ const analytics = useAnalyticsStore((state) => state.analytics);
  return (
   <div className='space-y-6'>
    <div>
@@ -71,7 +32,7 @@ export default function AnalyticsPage() {
       <Clock className='h-4 w-4 text-muted-foreground' />
      </CardHeader>
      <CardContent>
-      <div className='text-2xl font-bold'>{mockMetrics.totalTime}</div>
+      <div className='text-2xl font-bold'>{analytics.metrics.totalTime}</div>
      </CardContent>
     </Card>
 
@@ -81,7 +42,7 @@ export default function AnalyticsPage() {
       <FileText className='h-4 w-4 text-muted-foreground' />
      </CardHeader>
      <CardContent>
-      <div className='text-2xl font-bold'>{mockMetrics.totalEntries}</div>
+      <div className='text-2xl font-bold'>{analytics.metrics.totalEntries}</div>
      </CardContent>
     </Card>
 
@@ -91,7 +52,7 @@ export default function AnalyticsPage() {
       <Activity className='h-4 w-4 text-muted-foreground' />
      </CardHeader>
      <CardContent>
-      <div className='text-2xl font-bold'>{mockMetrics.avgDuration}</div>
+      <div className='text-2xl font-bold'>{analytics.metrics.avgDuration}</div>
      </CardContent>
     </Card>
 
@@ -102,7 +63,7 @@ export default function AnalyticsPage() {
      </CardHeader>
      <CardContent>
       <div className='flex flex-wrap gap-2'>
-       {mockMetrics.topTags.map((tag) => (
+       {analytics.metrics.topTags.map((tag) => (
         <span key={tag} className='text-sm text-muted-foreground'>
          #{tag}
         </span>
@@ -120,7 +81,7 @@ export default function AnalyticsPage() {
      </CardHeader>
      <CardContent className='h-[350px]'>
       <ResponsiveContainer width='100%' height='100%'>
-       <BarChart data={mockActivityData}>
+       <BarChart data={analytics.activityData}>
         <CartesianGrid strokeDasharray='3 3' />
         <XAxis dataKey='day' />
         <YAxis />
@@ -137,7 +98,7 @@ export default function AnalyticsPage() {
      </CardHeader>
      <CardContent className='h-[350px]'>
       <ResponsiveContainer width='100%' height='100%'>
-       <LineChart data={mockActivityData}>
+       <LineChart data={analytics.activityData}>
         <CartesianGrid strokeDasharray='3 3' />
         <XAxis dataKey='day' />
         <YAxis />
@@ -157,7 +118,7 @@ export default function AnalyticsPage() {
      </CardHeader>
      <CardContent className='h-[300px]'>
       <ResponsiveContainer width='100%' height='100%'>
-       <BarChart data={mockSentimentData}>
+       <BarChart data={analytics.sentimentData}>
         <XAxis dataKey='month' />
         <YAxis tickFormatter={(value) => `${value}%`} />
         <Tooltip />
@@ -190,7 +151,7 @@ export default function AnalyticsPage() {
      </CardHeader>
      <CardContent className='h-[300px]'>
       <ResponsiveContainer width='100%' height='100%'>
-       <BarChart data={mockTopicsData} layout='vertical'>
+       <BarChart data={analytics.topicsData} layout='vertical'>
         <XAxis type='number' />
         <YAxis dataKey='topic' type='category' width={100} />
         <Tooltip />
@@ -202,11 +163,11 @@ export default function AnalyticsPage() {
 
     <Card className='lg:col-span-1 md:col-span-2'>
      <CardHeader>
-      <CardTitle className='text-lg'>Word Frequency</CardTitle>
+      <CardTitle className='text-lg'>Word Frequency (Top 10)</CardTitle>
      </CardHeader>
      <CardContent>
       <div className='space-y-3'>
-       {mockWordFrequency.map((item) => (
+       {analytics.wordFrequency.slice(0, 10).map((item) => (
         <div key={item.word} className='flex items-center gap-2'>
          <div className='w-20 sm:w-24 truncate font-medium'>{item.word}</div>
          <div className='flex-1'>
@@ -215,7 +176,7 @@ export default function AnalyticsPage() {
             className='h-full rounded-full bg-blue-500'
             style={{
              width: `${
-              (item.frequency / mockWordFrequency[0].frequency) * 100
+              (item.frequency / analytics.wordFrequency[0].frequency) * 100
              }%`,
             }}
            />

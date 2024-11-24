@@ -5,13 +5,21 @@ import { persist } from 'zustand/middleware';
 
 interface AnalyticsState {
  analytics: {
-  totalTime: number;
-  totalEntries: number;
-  averageDuration: number;
-  topTags: Array<{ tag: string; count: number }>;
-  topTopics: Array<{ topic: string; count: number }>;
-  wordFrequency: Array<{ word: string; count: number }>;
-  sentimentData: Array<{ sentiment: string; count: number }>;
+  metrics: {
+   totalTime: string;
+   totalEntries: number;
+   avgDuration: string;
+   topTags: string[];
+  };
+  activityData: Array<{ day: string; entries: number }>;
+  sentimentData: Array<{
+   month: string;
+   positive: number;
+   neutral: number;
+   negative: number;
+  }>;
+  topicsData: Array<{ topic: string; count: number }>;
+  wordFrequency: Array<{ word: string; frequency: number }>;
  };
  fetchAnalytics: () => Promise<void>;
  clearAnalytics: () => void;
@@ -21,13 +29,16 @@ export const useAnalyticsStore = create<AnalyticsState>()(
  persist(
   (set) => ({
    analytics: {
-    totalTime: 0,
-    totalEntries: 0,
-    averageDuration: 0,
-    topTags: [],
-    topTopics: [],
-    wordFrequency: [],
+    metrics: {
+     totalTime: '0',
+     totalEntries: 0,
+     avgDuration: '0',
+     topTags: [],
+    },
+    activityData: [],
     sentimentData: [],
+    topicsData: [],
+    wordFrequency: [],
    },
 
    fetchAnalytics: async () => {
@@ -45,13 +56,16 @@ export const useAnalyticsStore = create<AnalyticsState>()(
    clearAnalytics: () =>
     set({
      analytics: {
-      totalTime: 0,
-      totalEntries: 0,
-      averageDuration: 0,
-      topTags: [],
-      topTopics: [],
-      wordFrequency: [],
+      metrics: {
+       totalTime: '0',
+       totalEntries: 0,
+       avgDuration: '0',
+       topTags: [],
+      },
+      activityData: [],
       sentimentData: [],
+      topicsData: [],
+      wordFrequency: [],
      },
     }),
   }),
