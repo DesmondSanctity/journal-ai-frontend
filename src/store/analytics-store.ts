@@ -14,6 +14,7 @@ interface AnalyticsState {
   sentimentData: Array<{ sentiment: string; count: number }>;
  };
  fetchAnalytics: () => Promise<void>;
+ clearAnalytics: () => void;
 }
 
 export const useAnalyticsStore = create<AnalyticsState>()(
@@ -40,6 +41,19 @@ export const useAnalyticsStore = create<AnalyticsState>()(
     const analytics = await response.json();
     set({ analytics: analytics.data });
    },
+
+   clearAnalytics: () =>
+    set({
+     analytics: {
+      totalTime: 0,
+      totalEntries: 0,
+      averageDuration: 0,
+      topTags: [],
+      topTopics: [],
+      wordFrequency: [],
+      sentimentData: [],
+     },
+    }),
   }),
   {
    name: 'journal-storage',

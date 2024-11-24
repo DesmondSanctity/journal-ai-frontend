@@ -64,6 +64,11 @@ export const useAuthStore = create<AuthState>()(
    },
    logout: () => {
     set({ token: null, user: null });
+
+    // Clear other stores
+    useJournalStore.getState().clearEntries();
+    useAnalyticsStore.getState().clearAnalytics();
+
     window.location.href = '/auth/login';
    },
   }),

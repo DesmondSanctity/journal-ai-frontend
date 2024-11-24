@@ -30,6 +30,7 @@ interface JournalState {
  fetchEntries: () => Promise<void>;
  fetchEntryById: (id: string) => Promise<void>;
  deleteEntry: (id: string) => Promise<void>;
+ clearEntries: () => void;
 }
 
 export const useJournalStore = create<JournalState>()(
@@ -91,6 +92,8 @@ export const useJournalStore = create<JournalState>()(
      toast.error('Failed to delete entry');
     }
    },
+
+   clearEntries: () => set({ entries: [] }),
   }),
   {
    name: 'journal-storage',
