@@ -25,11 +25,12 @@ export default function JournalPage() {
     })
   : [];
 
-  console.log("Today's entries:", todayEntries);
+ console.log("Today's entries:", todayEntries);
 
  useEffect(() => {
   fetchEntries();
- }, [fetchEntries]);
+  console.log('Fetched entries:', entries);
+ }, [fetchEntries, entries]);
 
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
