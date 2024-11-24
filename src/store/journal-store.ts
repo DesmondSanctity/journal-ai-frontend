@@ -2,7 +2,7 @@ import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { useAuthStore } from './auth-store';
 import { persist } from 'zustand/middleware';
-// import { deleteAudioFile } from '@/lib/file';
+import toast from 'react-hot-toast';
 
 interface JournalState {
  entries: Array<{
@@ -24,11 +24,12 @@ interface JournalState {
   }>;
   duration: number;
   audioUrl: string;
+  publicId: string;
   createdAt: string;
  }>;
  fetchEntries: () => Promise<void>;
  fetchEntryById: (id: string) => Promise<void>;
- deleteEntry: (id: string, audioUrl: string) => Promise<void>;
+ deleteEntry: (id: string) => Promise<void>;
 }
 
 export const useJournalStore = create<JournalState>()(
@@ -38,46 +39,54 @@ export const useJournalStore = create<JournalState>()(
    entry: {},
 
    fetchEntries: async () => {
-    const token = useAuthStore.getState().token;
+    try {
+     const token = useAuthStore.getState().token;
 
-    const response = await fetch(`${API_URL}/journal`, {
-     headers: {
-      Authorization: `Bearer ${token}`,
-     },
-    });
-    const entries = await response.json();
-    set({ entries: entries.data });
-   },
-
-   fetchEntryById: async (id: string) => {
-    // find the entry with the given id
-    const foundEntry = useJournalStore
-     .getState()
-     .entries.find((entry) => entry.id === id);
-    if (foundEntry) {
-     set((state) => ({ ...state, currentEntry: foundEntry }));
+     const response = await fetch(`${API_URL}/journal`, {
+      headers: {
+       Authorization: `Bearer ${token}`,
+      },
+     });
+     const entries = await response.json();
+     set({ entries: entries.data });
+    } catch (error) {
+     toast.error('Failed to fetch entries');
     }
    },
 
-   deleteEntry: async (id: string, audioUrl: string) => {
-    const token = useAuthStore.getState().token;
-    console.log(audioUrl)
+   fetchEntryById: async (id: string) => {
+    try {
+     // find the entry with the given id
+     const foundEntry = useJournalStore
+      .getState()
+      .entries.find((entry) => entry.id === id);
+     if (foundEntry) {
+      set((state) => ({ ...state, currentEntry: foundEntry }));
+     }
+    } catch (error) {
+     toast.error('Failed to fetch entry');
+    }
+   },
 
-    // Delete from backend
-    await fetch(`${API_URL}/journal/${id}`, {
-     method: 'DELETE',
-     headers: {
-      Authorization: `Bearer ${token}`,
-     },
-    });
+   deleteEntry: async (id: string) => {
+    try {
+     const token = useAuthStore.getState().token;
 
-    // Delete audio file from Cloudinary
-    // await deleteAudioFile(audioUrl);
+     // Delete from backend
+     await fetch(`${API_URL}/journal/${id}`, {
+      method: 'DELETE',
+      headers: {
+       Authorization: `Bearer ${token}`,
+      },
+     });
 
-    // Update local state
-    set((state) => ({
-     entries: state.entries.filter((entry) => entry.id !== id),
-    }));
+     // Update local state
+     set((state) => ({
+      entries: state.entries.filter((entry) => entry.id !== id),
+     }));
+    } catch (error) {
+     toast.error('Failed to delete entry');
+    }
    },
   }),
   {

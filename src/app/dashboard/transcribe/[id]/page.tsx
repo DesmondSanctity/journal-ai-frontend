@@ -10,7 +10,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useJournalStore } from '@/store/journal-store';
 import { calculateDominantMood } from '@/lib/journal';
 
-
 export default function TranscriptPage() {
  const params = useParams();
  const router = useRouter();
@@ -41,7 +40,7 @@ export default function TranscriptPage() {
      size='sm'
      className='flex items-center gap-2'
      onClick={async () => {
-      await deleteEntry(entry.id, entry.audioUrl);
+      await deleteEntry(entry.id);
       // Add your delete entry logic here
       router.push('/dashboard/journal');
      }}

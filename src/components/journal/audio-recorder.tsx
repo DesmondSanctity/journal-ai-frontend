@@ -108,7 +108,7 @@ export function AudioRecorder() {
     audioPlayer.current.pause();
    }
   };
- });
+ }, []);
 
  useEffect(() => {
   let timer: NodeJS.Timeout;

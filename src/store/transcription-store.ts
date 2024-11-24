@@ -4,6 +4,7 @@ import { API_URL } from '@/constants';
 import { useJournalStore } from './journal-store';
 import { useAnalyticsStore } from './analytics-store';
 import { saveAudioFile } from '@/lib/file';
+import toast from 'react-hot-toast';
 
 interface TranscriptionState {
  isConnected: boolean;
@@ -41,7 +42,7 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
   set({ isSending: true });
 
   try {
-   const audioUrl = await saveAudioFile(audioBlob);
+   const { url, publicId } = await saveAudioFile(audioBlob);
 
    const response = await fetch(
     `${API_URL}/transcription/transcribe/${userId}`,
@@ -51,7 +52,7 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
      },
-     body: JSON.stringify({ audioUrl }),
+     body: JSON.stringify({ audioUrl: url, publicId }),
     }
    );
 
@@ -65,11 +66,13 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
     isSending: false,
    });
 
+   toast.success('Journal entry created successfully!');
+
    // Refresh journals and analytics after new entry
    useJournalStore.getState().fetchEntries();
    useAnalyticsStore.getState().fetchAnalytics();
   } catch (error) {
-   console.error('Transcription error:', error);
+   toast.error('Failed to create journal entry');
    set({ isSending: false });
   }
  },

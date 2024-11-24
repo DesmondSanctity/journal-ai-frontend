@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { useJournalStore } from './journal-store';
 import { useAnalyticsStore } from './analytics-store';
+import toast from 'react-hot-toast';
 
 interface AuthState {
  token: string | null;
@@ -24,28 +25,40 @@ export const useAuthStore = create<AuthState>()(
    token: null,
    user: null,
    login: async (email, password) => {
-    const response = await fetch(`${API_URL}/auth/login`, {
-     method: 'POST',
-     headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
+    try {
+     const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+     });
+     const data = await response.json();
 
-    set({ token: data.data.token, user: data.data.user });
+     set({ token: data.data.token, user: data.data.user });
 
-    // Initialize other stores
-    useJournalStore.getState().fetchEntries();
-    useAnalyticsStore.getState().fetchAnalytics();
+     toast.success('Login successful!');
+
+     // Initialize other stores
+     useJournalStore.getState().fetchEntries();
+     useAnalyticsStore.getState().fetchAnalytics();
+    } catch (error) {
+     toast.error('Login failed. Please check your credentials.');
+    }
    },
    register: async (name, email, password) => {
-    const response = await fetch(`${API_URL}/auth/register`, {
-     method: 'POST',
-     headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify({ name, email, password }),
-    });
-    const data = await response.json();
+    try {
+     const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+     });
+     const data = await response.json();
 
-    set({ token: data.token, user: data.user });
+     set({ token: data.token, user: data.user });
+
+     toast.success('Registration successful! Please log in.');
+    } catch (error) {
+     toast.error('Registration failed. Please try again.');
+    }
    },
    logout: () => {
     set({ token: null, user: null });
@@ -65,7 +78,7 @@ export const useAuthStore = create<AuthState>()(
     setItem: (name, value) => {
      document.cookie = `${name}=${value}; path=/`;
     },
-    
+
     removeItem: (name) => {
      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     },
