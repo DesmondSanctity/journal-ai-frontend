@@ -25,7 +25,7 @@ export default function JournalPage() {
     })
   : [];
 
-  console.log('Today&apos;s entries:', todayEntries);
+ console.log('Today&apos;s entries:', todayEntries);
 
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
@@ -87,9 +87,16 @@ export default function JournalPage() {
      <CardContent>
       <div className='space-y-4 text-sm'>
        {todayEntries.length > 0 ? (
-        <p className='text-muted-foreground leading-relaxed'>
-         {todayEntries.map((entry) => entry.excerpt).join(' \n')}
-        </p>
+        // <p className='text-muted-foreground leading-relaxed'>
+        //  {todayEntries.map((entry) => entry.excerpt).join('')}
+        // </p>
+        <div className='space-y-2 mt-2'>
+         {todayEntries?.map((entry) => (
+          <div key={entry.id} className='text-sm text-muted-foreground'>
+           {entry.excerpt}
+          </div>
+         ))}
+        </div>
        ) : (
         <p className='text-muted-foreground leading-relaxed'>
          No entries for today. Start by recording your thoughts above.

@@ -12,8 +12,14 @@ interface JournalState {
   excerpt: string;
   summary: string;
   segments: Array<{
-   timestamp: string;
    text: string;
+   timestamp: string;
+  }>
+  sentiments: Array<{
+   sentiment: string;
+   text: string;
+   confidence: number;
+   timestamp: string;
   }>;
   duration: number;
   audioUrl: string;

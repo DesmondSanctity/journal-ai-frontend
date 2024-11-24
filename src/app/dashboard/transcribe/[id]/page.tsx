@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useJournalStore } from '@/store/journal-store';
+import { calculateDominantMood } from '@/lib/journal';
 
 const mockTranscript = {
  id: '1',
@@ -30,6 +31,10 @@ export default function TranscriptPage() {
  const entry = useJournalStore((state) =>
   state.entries.find((entry) => entry.id === journalId)
  );
+
+ const dominantMood = calculateDominantMood(entry?.sentiments || []);
+ console.log('Dominant Mood:', dominantMood);
+ console.log('Segments:', entry?.segments || []);
 
  if (!entry) {
   return <div>Entry not found</div>;
@@ -109,16 +114,29 @@ export default function TranscriptPage() {
          </div>
         </div>
 
-        <div className='space-y-2'>
-         <div className='flex items-center gap-2 text-sm font-medium'>
-          <ListChecks className='h-4 w-4' /> Categories
+        <div className='space-y-4 text-sm'>
+         {/* Date and Time */}
+         <div>
+          <h4 className='font-medium mb-1'>Created</h4>
+          <span className='text-muted-foreground'>
+           {new Date(entry.createdAt).toLocaleString()}
+          </span>
          </div>
-         <div className='flex gap-2'>
-          {mockTranscript.categories.map((category) => (
-           <Badge key={category} variant='outline'>
-            {category}
-           </Badge>
-          ))}
+
+         {/* Audio Player */}
+         <div>
+          <h4 className='font-medium mb-1'>Recording</h4>
+          <audio controls className='w-full'>
+           <source src={entry.audioUrl} type='audio/webm' />
+          </audio>
+         </div>
+
+         {/* Average Mood */}
+         <div>
+          <h4 className='font-medium mb-1'>Overall Mood</h4>
+          <span className='text-muted-foreground capitalize'>
+           {dominantMood}
+          </span>
          </div>
         </div>
        </CardContent>

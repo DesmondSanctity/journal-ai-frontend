@@ -29,8 +29,14 @@ type JournalEntry = {
  summary: string;
  excerpt: string;
  segments: Array<{
-  timestamp: string;
-  text: string;
+ text: string;
+ timestamp: string;
+ }>;
+ sentiments: Array<{
+ sentiment: string;
+ text: string;
+ confidence: number;
+ timestamp: string;
  }>;
  duration: number;
  audioUrl: string;
