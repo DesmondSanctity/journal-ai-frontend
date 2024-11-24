@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { useAuthStore } from './auth-store';
 import { API_URL } from '@/constants';
+import { useJournalStore } from './journal-store';
+import { useAnalyticsStore } from './analytics-store';
 
 interface TranscriptionState {
  isConnected: boolean;
@@ -61,6 +63,10 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
     transcribedText: data.text,
     isSending: false,
    });
+
+   // Refresh journals and analytics after new entry
+   useJournalStore.getState().fetchEntries();
+   useAnalyticsStore.getState().fetchAnalytics();
   } catch (error) {
    console.error('Transcription error:', error);
    set({ isSending: false });

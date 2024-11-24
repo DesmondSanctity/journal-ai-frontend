@@ -4,14 +4,10 @@ import { EntryHistory } from '@/components/journal/history';
 import { Card, CardContent } from '@/components/ui/card';
 import { useJournalStore } from '@/store/journal-store';
 import { BookOpen } from 'lucide-react';
-import { useEffect } from 'react';
 
 export default function TranscribePage() {
- const { entries = [], fetchEntries } = useJournalStore();
+ const { entries = [] } = useJournalStore.getState();
 
- useEffect(() => {
-  fetchEntries();
- }, [fetchEntries]);
  return (
   <div className='space-y-6'>
    <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>

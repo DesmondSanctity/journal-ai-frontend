@@ -1,6 +1,8 @@
 import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { useJournalStore } from './journal-store';
+import { useAnalyticsStore } from './analytics-store';
 
 interface AuthState {
  token: string | null;
@@ -28,7 +30,12 @@ export const useAuthStore = create<AuthState>()(
      body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
+
     set({ token: data.data.token, user: data.data.user });
+
+    // Initialize other stores
+    useJournalStore.getState().fetchEntries();
+    useAnalyticsStore.getState().fetchAnalytics();
    },
    register: async (name, email, password) => {
     const response = await fetch(`${API_URL}/auth/register`, {
@@ -37,6 +44,7 @@ export const useAuthStore = create<AuthState>()(
      body: JSON.stringify({ name, email, password }),
     });
     const data = await response.json();
+
     set({ token: data.token, user: data.user });
    },
    logout: () => {
@@ -53,9 +61,11 @@ export const useAuthStore = create<AuthState>()(
       .find((row) => row.startsWith(name));
      return cookie ? cookie.split('=')[1] : null;
     },
+
     setItem: (name, value) => {
      document.cookie = `${name}=${value}; path=/`;
     },
+    
     removeItem: (name) => {
      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     },

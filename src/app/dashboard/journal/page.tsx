@@ -5,12 +5,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, BookText, CalendarDays } from 'lucide-react';
 import { EntryHistory } from '@/components/journal/history';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useJournalStore } from '@/store/journal-store';
 
 export default function JournalPage() {
  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
- const { entries = [], fetchEntries } = useJournalStore();
+ const { entries = [] } = useJournalStore.getState();
 
  // Filter entries for today
  const todayEntries = Array.isArray(entries)
@@ -24,13 +24,6 @@ export default function JournalPage() {
      );
     })
   : [];
-
- console.log("Today's entries:", todayEntries);
-
- useEffect(() => {
-  fetchEntries();
-  console.log('Fetched entries:', entries);
- }, [fetchEntries, entries]);
 
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
