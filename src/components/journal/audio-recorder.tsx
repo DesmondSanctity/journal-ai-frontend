@@ -45,45 +45,60 @@ export function AudioRecorder() {
    return;
   }
 
-  if (!isRecording) {
-   // Stop any playing audio
-   if (audioPlayer.current) {
-    audioPlayer.current.pause();
-    audioPlayer.current = null;
-   }
-   setIsPlaying(false);
-   setCanPlay(false);
-   setAudioBlob(new Blob());
-   setTimeLeft(300);
-
-   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-   mediaRecorder.current = new MediaRecorder(stream, {
-    mimeType: 'audio/webm;codecs=opus',
-   });
-   audioChunks.current = [];
-
-   mediaRecorder.current.ondataavailable = (event) => {
-    audioChunks.current.push(event.data);
+  try {
+   const constraints = {
+    audio: {
+     echoCancellation: true,
+     noiseSuppression: true,
+     sampleRate: 44100,
+    },
    };
 
-   mediaRecorder.current.onstop = async () => {
-    const audioBlob = new Blob(audioChunks.current, {
-     type: 'audio/webm;codecs=opus',
-    });
-    setAudioBlob(audioBlob);
-    setCanPlay(true);
-   };
+   const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-   setTimeout(() => {
-    if (mediaRecorder.current?.state === 'recording') {
-     handleStopRecording();
+   if (!isRecording) {
+    // Stop any playing audio
+    if (audioPlayer.current) {
+     audioPlayer.current.pause();
+     audioPlayer.current = null;
     }
-   }, 300000);
+    
+    setIsPlaying(false);
+    setCanPlay(false);
+    setAudioBlob(new Blob());
+    setTimeLeft(300);
 
-   setIsRecording(true);
-   mediaRecorder.current.start();
-  } else {
-   handleStopRecording();
+    mediaRecorder.current = new MediaRecorder(stream, {
+     mimeType: 'audio/webm;codecs=opus',
+    });
+    audioChunks.current = [];
+
+    mediaRecorder.current.ondataavailable = (event) => {
+     audioChunks.current.push(event.data);
+    };
+
+    mediaRecorder.current.onstop = async () => {
+     const audioBlob = new Blob(audioChunks.current, {
+      type: 'audio/webm;codecs=opus',
+     });
+     setAudioBlob(audioBlob);
+     setCanPlay(true);
+    };
+
+    setTimeout(() => {
+     if (mediaRecorder.current?.state === 'recording') {
+      handleStopRecording();
+     }
+    }, 300000);
+
+    setIsRecording(true);
+    mediaRecorder.current.start();
+   } else {
+    handleStopRecording();
+   }
+  } catch (error) {
+   toast.error('Microphone access needed - check your browser settings');
+   console.log('Recording setup:', error);
   }
  };
  const handleStopRecording = () => {
