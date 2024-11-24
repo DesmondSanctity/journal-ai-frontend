@@ -61,6 +61,7 @@ export const useJournalStore = create<JournalState>()(
 
    deleteEntry: async (id: string, audioUrl: string) => {
     const token = useAuthStore.getState().token;
+    console.log(audioUrl)
 
     // Delete from backend
     await fetch(`${API_URL}/journal/${id}`, {
