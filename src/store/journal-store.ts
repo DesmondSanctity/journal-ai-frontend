@@ -50,6 +50,7 @@ export const useJournalStore = create<JournalState>()(
      const entries = await response.json();
      set({ entries: entries.data });
     } catch (error) {
+     console.error('Error fetching entries:', error);
      toast.error('Failed to fetch entries');
     }
    },
@@ -64,6 +65,7 @@ export const useJournalStore = create<JournalState>()(
       set((state) => ({ ...state, currentEntry: foundEntry }));
      }
     } catch (error) {
+     console.error('Error fetching entry:', error);
      toast.error('Failed to fetch entry');
     }
    },
@@ -85,6 +87,7 @@ export const useJournalStore = create<JournalState>()(
       entries: state.entries.filter((entry) => entry.id !== id),
      }));
     } catch (error) {
+     console.error('Error deleting entry:', error);
      toast.error('Failed to delete entry');
     }
    },

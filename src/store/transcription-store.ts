@@ -72,6 +72,7 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
    useJournalStore.getState().fetchEntries();
    useAnalyticsStore.getState().fetchAnalytics();
   } catch (error) {
+   console.error('Error sending audio recording:', error);
    toast.error('Failed to create journal entry');
    set({ isSending: false });
   }

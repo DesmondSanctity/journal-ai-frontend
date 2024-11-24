@@ -41,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
      useJournalStore.getState().fetchEntries();
      useAnalyticsStore.getState().fetchAnalytics();
     } catch (error) {
+     console.error('Login failed:', error);
      toast.error('Login failed. Please check your credentials.');
     }
    },
@@ -57,6 +58,7 @@ export const useAuthStore = create<AuthState>()(
 
      toast.success('Registration successful! Please log in.');
     } catch (error) {
+     console.log('Registration failed:', error);
      toast.error('Registration failed. Please try again.');
     }
    },
