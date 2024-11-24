@@ -1,5 +1,6 @@
 import { CLOUDINARY_API_KEY } from '@/constants';
 import { useAuthStore } from '@/store/auth-store';
+import { getPublicIdFromUrl } from './journal';
 
 export async function saveAudioFile(blob: Blob) {
  const { user } = useAuthStore.getState();
@@ -36,8 +37,36 @@ export async function saveAudioFile(blob: Blob) {
   throw new Error('Failed to upload audio file');
  }
 
- console.log('Audio file uploaded successfully:', response);
-
  const data = await response.json();
  return data.secure_url;
+}
+
+export async function deleteAudioFile(audioUrl: string) {
+ const pubKey = CLOUDINARY_API_KEY;
+ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+ if (!pubKey) {
+  throw new Error('Cloudinary API key is not defined');
+ }
+
+ if (!cloudName) {
+  throw new Error('Cloudinary cloud name is not defined');
+ }
+
+ const publicId = getPublicIdFromUrl(audioUrl);
+
+ const formData = new FormData();
+ formData.append('public_id', publicId);
+ formData.append('api_key', pubKey);
+
+ const response = await fetch(
+  `https://api.cloudinary.com/v1_1/${cloudName}/destroy`,
+  {
+   method: 'POST',
+   body: formData,
+  }
+ );
+
+ const data = await response.json();
+ return data.result;
 }

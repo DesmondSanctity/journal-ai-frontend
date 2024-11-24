@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, FileText, Settings } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { formatDistanceToNow } from 'date-fns';
+import { useJournalStore } from '@/store/journal-store';
 
 const mockUserData = {
  name: 'Alex Johnson',
@@ -21,7 +22,19 @@ const mockUserData = {
 
 export default function ProfilePage() {
  const user = useAuthStore((state) => state.user);
+ const entries = useJournalStore((state) => state.entries);
+
  if (!user) return null;
+
+ const stats = {
+  totalJournals: entries.length,
+  totalTime: `${(
+   entries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 60
+  ).toFixed(1)} minutes`,
+  lastActive: entries[0]
+   ? formatDistanceToNow(new Date(entries[0].createdAt)) + ' ago'
+   : 'No activity yet',
+ };
 
  return (
   <div className='space-y-6'>
@@ -61,7 +74,7 @@ export default function ProfilePage() {
      </CardHeader>
      <CardContent>
       <div className='text-2xl font-bold'>
-       {mockUserData.stats.totalJournals}
+       {stats.totalJournals}
       </div>
      </CardContent>
     </Card>
@@ -72,17 +85,17 @@ export default function ProfilePage() {
       <Clock className='h-4 w-4 text-muted-foreground' />
      </CardHeader>
      <CardContent>
-      <div className='text-2xl font-bold'>{mockUserData.stats.totalTime}</div>
+      <div className='text-2xl font-bold'>{stats.totalTime}</div>
      </CardContent>
     </Card>
 
     <Card>
      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-      <CardTitle className='text-sm font-medium'>Last Active</CardTitle>
+      <CardTitle className='text-sm font-medium'>Last Entry</CardTitle>
       <Settings className='h-4 w-4 text-muted-foreground' />
      </CardHeader>
      <CardContent>
-      <div className='text-2xl font-bold'>{mockUserData.stats.lastActive}</div>
+      <div className='text-2xl font-bold'>{stats.lastActive}</div>
      </CardContent>
     </Card>
    </div>

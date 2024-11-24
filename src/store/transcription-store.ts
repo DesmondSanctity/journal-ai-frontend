@@ -3,6 +3,7 @@ import { useAuthStore } from './auth-store';
 import { API_URL } from '@/constants';
 import { useJournalStore } from './journal-store';
 import { useAnalyticsStore } from './analytics-store';
+import { saveAudioFile } from '@/lib/file';
 
 interface TranscriptionState {
  isConnected: boolean;
@@ -10,7 +11,7 @@ interface TranscriptionState {
  audioBlob: Blob | null;
  isRecording: boolean;
  isSending: boolean;
- sendAudioRecording: (audioUrl: string) => Promise<void>;
+ sendAudioRecording: (audioBlob: Blob) => Promise<void>;
  setIsRecording: (value: boolean) => void;
  setAudioBlob: (blob: Blob) => void;
  resetState: () => void;
@@ -31,9 +32,7 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
   set({ audioBlob: blob });
  },
 
- sendAudioRecording: async (audioUrl: string) => {
-  console.log('Sending audio recording:', audioUrl);
-
+ sendAudioRecording: async (audioBlob: Blob) => {
   const { token, user } = useAuthStore.getState();
   const userId = user?.id;
 
@@ -42,6 +41,8 @@ export const useTranscriptionStore = create<TranscriptionState>((set) => ({
   set({ isSending: true });
 
   try {
+   const audioUrl = await saveAudioFile(audioBlob);
+
    const response = await fetch(
     `${API_URL}/transcription/transcribe/${userId}`,
     {

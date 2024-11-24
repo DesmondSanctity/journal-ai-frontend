@@ -6,8 +6,6 @@ type Segment = {
 };
 
 export function calculateDominantMood(segments: Segment[] = []): string {
- console.log('Received segments:', segments);
-
  if (!segments || !Array.isArray(segments) || segments.length === 0) {
   return 'neutral';
  }
@@ -18,11 +16,13 @@ export function calculateDominantMood(segments: Segment[] = []): string {
   return acc;
  }, {} as Record<string, number>);
 
- console.log('Mood counts:', moodCounts);
-
  const sortedMoods = Object.entries(moodCounts).sort(([, a], [, b]) => b - a);
 
- console.log('Sorted moods:', sortedMoods);
-
  return sortedMoods[0][0].toLowerCase();
+}
+
+export function getPublicIdFromUrl(url: string): string {
+ const parts = url.split('/upload/');
+ const publicId = parts[1].split('.')[0].replace('v1732416713/', '');
+ return publicId;
 }

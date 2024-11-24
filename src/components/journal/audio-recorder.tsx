@@ -12,6 +12,7 @@ export function AudioRecorder() {
  const audioPlayer = useRef<HTMLAudioElement | null>(null);
  const [canPlay, setCanPlay] = useState(false);
  const [isPlaying, setIsPlaying] = useState(false);
+ const [timeLeft, setTimeLeft] = useState(300); // 300 seconds = 5 minutes
 
  const {
   sendAudioRecording,
@@ -34,6 +35,7 @@ export function AudioRecorder() {
    setIsPlaying(false);
    setCanPlay(false);
    setAudioBlob(new Blob());
+   setTimeLeft(300);
 
    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
    mediaRecorder.current = new MediaRecorder(stream, {
@@ -53,6 +55,12 @@ export function AudioRecorder() {
     setCanPlay(true);
    };
 
+   setTimeout(() => {
+    if (mediaRecorder.current?.state === 'recording') {
+     handleStopRecording();
+    }
+   }, 300000);
+
    setIsRecording(true);
    mediaRecorder.current.start();
   } else {
@@ -62,6 +70,7 @@ export function AudioRecorder() {
  const handleStopRecording = () => {
   mediaRecorder.current?.stop();
   setIsRecording(false);
+  setTimeLeft(300);
   mediaRecorder.current?.stream.getTracks().forEach((track) => track.stop());
  };
 
@@ -85,8 +94,7 @@ export function AudioRecorder() {
 
  const handleSubmit = async () => {
   if (audioBlob) {
-   const audioUrl = await saveAudioFile(audioBlob);
-   await sendAudioRecording(audioUrl);
+   await sendAudioRecording(audioBlob);
    setCanPlay(false);
    setAudioBlob(new Blob());
   }
@@ -103,12 +111,26 @@ export function AudioRecorder() {
   };
  }, []);
 
+ useEffect(() => {
+  let timer: NodeJS.Timeout;
+  if (isRecording && timeLeft > 0) {
+   timer = setInterval(() => {
+    setTimeLeft((prev) => {
+     if (prev <= 1) handleStopRecording();
+     return prev - 1;
+    });
+   }, 1000);
+  }
+  return () => clearInterval(timer);
+ }, [isRecording, timeLeft]);
+
  return (
   <div className='space-y-4'>
    <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
     <Button
      onClick={handleRecording}
-     variant={isRecording ? 'destructive' : 'default'}
+     variant={isRecording ? 'outline' : 'default'}
+     disabled={isSending}
      className='flex items-center gap-2'
     >
      {isRecording ? (
@@ -129,6 +151,7 @@ export function AudioRecorder() {
       <Button
        onClick={handlePlayback}
        variant='outline'
+       disabled={isSending}
        className='w-full sm:w-auto'
       >
        {isPlaying ? (
@@ -169,6 +192,10 @@ export function AudioRecorder() {
      </div>
      <span className='text-sm text-muted-foreground'>
       Recording in progress...
+     </span>
+     <span className='text-sm text-muted-foreground'>
+      {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}{' '}
+      remaining
      </span>
     </div>
    )}

@@ -25,15 +25,13 @@ export default function JournalPage() {
     })
   : [];
 
- console.log('Today&apos;s entries:', todayEntries);
-
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
    {/* Left Column - Journal Input and History */}
    <div className='lg:col-span-2 space-y-6'>
     <Card>
      <CardHeader>
-      <CardTitle>Today&apos;s Journal</CardTitle>
+      <CardTitle>What&apos;s on your mind?</CardTitle>
      </CardHeader>
      <CardContent>
       <h4>Make a journal entry today...</h4>
@@ -87,9 +85,6 @@ export default function JournalPage() {
      <CardContent>
       <div className='space-y-4 text-sm'>
        {todayEntries.length > 0 ? (
-        // <p className='text-muted-foreground leading-relaxed'>
-        //  {todayEntries.map((entry) => entry.excerpt).join('')}
-        // </p>
         <div className='space-y-2 mt-2'>
          {todayEntries?.map((entry) => (
           <div key={entry.id} className='text-sm text-muted-foreground'>

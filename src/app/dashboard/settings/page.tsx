@@ -18,6 +18,7 @@ import {
  SelectValue,
 } from '@/components/ui/select';
 import { Bell, Volume2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function SettingsPage() {
  return (
@@ -39,7 +40,10 @@ export default function SettingsPage() {
     <TabsContent value='general'>
      <Card>
       <CardHeader>
-       <CardTitle>Appearance</CardTitle>
+       <div className='flex items-center gap-2'>
+        <CardTitle>Appearance</CardTitle>
+        <Badge variant='secondary'>Coming Soon</Badge>
+       </div>
        <CardDescription>Customize how the app looks and feels</CardDescription>
       </CardHeader>
       <CardContent className='space-y-4'>
@@ -50,7 +54,7 @@ export default function SettingsPage() {
           Switch between light and dark themes
          </p>
         </div>
-        <Switch />
+        <Switch disabled />
        </div>
       </CardContent>
      </Card>
@@ -62,6 +66,7 @@ export default function SettingsPage() {
        <div className='flex items-center gap-2'>
         <Bell className='h-5 w-5' />
         <CardTitle>Notification Preferences</CardTitle>
+        <Badge variant='secondary'>Coming Soon</Badge>
        </div>
       </CardHeader>
       <CardContent className='space-y-4'>
@@ -72,7 +77,7 @@ export default function SettingsPage() {
           Get notified when your recording is transcribed
          </p>
         </div>
-        <Switch defaultChecked />
+        <Switch disabled />
        </div>
        <div className='flex items-center justify-between'>
         <div className='space-y-0.5'>
@@ -81,7 +86,7 @@ export default function SettingsPage() {
           Receive a daily summary of your journals
          </p>
         </div>
-        <Switch />
+        <Switch disabled />
        </div>
       </CardContent>
      </Card>
@@ -93,12 +98,13 @@ export default function SettingsPage() {
        <div className='flex items-center gap-2'>
         <Volume2 className='h-5 w-5' />
         <CardTitle>Audio Settings</CardTitle>
+        <Badge variant='secondary'>Coming Soon</Badge>
        </div>
       </CardHeader>
       <CardContent className='space-y-4'>
        <div className='space-y-2'>
         <Label>Audio Quality</Label>
-        <Select defaultValue='high'>
+        <Select defaultValue='high' disabled>
          <SelectTrigger>
           <SelectValue placeholder='Select quality' />
          </SelectTrigger>
@@ -116,7 +122,7 @@ export default function SettingsPage() {
           Reduce background noise in recordings
          </p>
         </div>
-        <Switch defaultChecked />
+        <Switch disabled />
        </div>
       </CardContent>
      </Card>

@@ -3,38 +3,24 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Tag, FileText, ArrowLeft } from 'lucide-react';
+import { Clock, Tag, FileText, ArrowLeft, Trash2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useJournalStore } from '@/store/journal-store';
 import { calculateDominantMood } from '@/lib/journal';
 
-const mockTranscript = {
- id: '1',
- title: 'Team Standup Meeting',
- duration: 1800,
- createdAt: new Date().toISOString(),
- segments: [
-  { text: "Let's begin with updates from the frontend team.", timestamp: 0 },
-  { text: 'We completed the new dashboard implementation.', timestamp: 45 },
- ],
- summary:
-  'Weekly team standup covering frontend updates, backend progress, and upcoming sprint planning.',
- tags: ['meeting', 'standup', 'team-updates'],
- categories: ['Development', 'Planning'],
-};
 
 export default function TranscriptPage() {
  const params = useParams();
+ const router = useRouter();
  const journalId = params.id as string;
  const entry = useJournalStore((state) =>
   state.entries.find((entry) => entry.id === journalId)
  );
+ const deleteEntry = useJournalStore((state) => state.deleteEntry);
 
  const dominantMood = calculateDominantMood(entry?.sentiments || []);
- console.log('Dominant Mood:', dominantMood);
- console.log('Segments:', entry?.segments || []);
 
  if (!entry) {
   return <div>Entry not found</div>;
@@ -42,18 +28,32 @@ export default function TranscriptPage() {
 
  return (
   <div>
-   <div className='mb-8'>
+   <div className='mb-8 flex items-center justify-between'>
     <Link href='/dashboard/transcribe'>
      <Button variant='ghost' className='flex items-center gap-2'>
       <ArrowLeft className='h-4 w-4' />
       Back to Transcriptions
      </Button>
     </Link>
+
+    <Button
+     variant='destructive'
+     size='sm'
+     className='flex items-center gap-2'
+     onClick={async () => {
+      await deleteEntry(entry.id, entry.audioUrl);
+      // Add your delete entry logic here
+      router.push('/dashboard/journal');
+     }}
+    >
+     <Trash2 className='h-4 w-4' />
+     <span className='hidden sm:inline'>Delete Entry</span>
+    </Button>
    </div>
 
    <div className='max-w-4xl mx-auto space-y-6'>
     <div className='flex items-center justify-between'>
-     <h1 className='text-3xl font-bold'>{mockTranscript.title}</h1>
+     <h1 className='text-xl font-bold'>{entry.title ?? 'Journal Entry'}</h1>
      <div className='flex items-center gap-2 text-muted-foreground'>
       <Clock className='h-4 w-4' />
       <span>{Math.floor(entry.duration / 60)} minutes</span>
@@ -75,7 +75,7 @@ export default function TranscriptPage() {
           key={index}
           className='flex gap-4 py-2 hover:bg-muted/50 rounded-lg px-2'
          >
-          <span className='text-sm text-muted-foreground w-20'>
+          <span className='text-sm text-muted-foreground whitespace-nowrap min-w-[80px]'>
            {segment.timestamp}
           </span>
           <p className='flex-1'>{segment.text}</p>
@@ -93,7 +93,7 @@ export default function TranscriptPage() {
         </CardTitle>
        </CardHeader>
        <CardContent>
-        <p className='leading-7'>{entry.summary}</p>
+        <p className='leading-7 whitespace-pre-line'>{entry.summary}</p>
        </CardContent>
       </Card>
      </TabsContent>

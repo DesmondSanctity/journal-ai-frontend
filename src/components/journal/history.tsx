@@ -9,6 +9,8 @@ import {
  XIcon,
  ChevronLeft,
  ChevronRight,
+ AudioWaveform,
+ Clock,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -29,14 +31,14 @@ type JournalEntry = {
  summary: string;
  excerpt: string;
  segments: Array<{
- text: string;
- timestamp: string;
+  text: string;
+  timestamp: string;
  }>;
  sentiments: Array<{
- sentiment: string;
- text: string;
- confidence: number;
- timestamp: string;
+  sentiment: string;
+  text: string;
+  confidence: number;
+  timestamp: string;
  }>;
  duration: number;
  audioUrl: string;
@@ -57,59 +59,73 @@ type FilterState = {
 
 function JournalCard({ entry }: { entry: JournalEntry }) {
  return (
-  <Card className='hover:shadow-md transition-all cursor-pointer h-full'>
-   <CardHeader>
-    <div className='flex justify-between items-start'>
-     <div>
-      <CardTitle className='line-clamp-1'>{entry.title}</CardTitle>
-      <p className='text-sm text-muted-foreground'>
-       {formatDistanceToNow(new Date(entry.createdAt))} ago
+  <Link href={`/dashboard/transcribe/${entry.id}`}>
+   <Card className='group overflow-hidden transition-all hover:shadow-lg h-full'>
+    <CardContent className='p-6'>
+     <div className='space-y-4'>
+      <div className='flex items-center gap-3'>
+       <div className='h-2 w-2 rounded-full bg-primary animate-pulse' />
+       <p className='text-sm text-muted-foreground'>
+        {formatDistanceToNow(new Date(entry.createdAt))} ago
+       </p>
+      </div>
+
+      <p className='text-sm leading-relaxed line-clamp-3 group-hover:text-primary transition-colors'>
+       {entry.content}
       </p>
+
+      <div className='flex flex-wrap gap-2 pt-2'>
+       {entry.tags.map((tag) => (
+        <span
+         key={tag}
+         className='text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground'
+        >
+         {tag}
+        </span>
+       ))}
+      </div>
      </div>
-     <div className='flex gap-2'>
-      {entry.tags.map((tag) => (
-       <Badge key={tag} variant='secondary'>
-        {tag}
-       </Badge>
-      ))}
-     </div>
-    </div>
-   </CardHeader>
-   <CardContent>
-    <p className='text-sm text-muted-foreground line-clamp-2'>
-     {entry.content}
-    </p>
-   </CardContent>
-  </Card>
+    </CardContent>
+   </Card>
+  </Link>
  );
 }
 
 function TranscriptionCard({ entry }: { entry: JournalEntry }) {
  return (
-  <Card className='hover:shadow-md transition-all cursor-pointer h-full'>
-   <CardHeader>
-    <div className='flex justify-between items-start'>
-     <div>
-      <CardTitle className='line-clamp-1'>{entry.title}</CardTitle>
-      <p className='text-sm text-muted-foreground'>
-       {formatDistanceToNow(new Date(entry.createdAt))} ago
+  <Link href={`/dashboard/transcribe/${entry.id}`}>
+   <Card className='group transition-all hover:shadow-lg hover:border-primary/20 h-full'>
+    <CardHeader className='space-y-4'>
+     <div className='flex justify-between items-start'>
+      <div className='space-y-1'>
+       <CardTitle className='text-lg font-semibold tracking-tight'>
+        {entry.title ?? 'Journal Entry'}
+       </CardTitle>
+       <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+        <Clock className='h-4 w-4' />
+        {formatDistanceToNow(new Date(entry.createdAt))} ago
+       </div>
+      </div>
+      <div className='flex gap-1.5 flex-wrap justify-end max-w-[40%]'>
+       {entry.tags.map((tag) => (
+        <Badge key={tag} variant='secondary' className='text-xs'>
+         {tag}
+        </Badge>
+       ))}
+      </div>
+     </div>
+     <div className='space-y-2'>
+      <p className='text-sm text-muted-foreground line-clamp-2'>
+       {entry.content}
       </p>
+      <div className='flex items-center gap-2 text-sm'>
+       <AudioWaveform className='h-4 w-4 text-primary' />
+       <span>{Math.floor(entry.duration / 60)} minutes</span>
+      </div>
      </div>
-     <div className='flex gap-2'>
-      {entry.tags.map((tag) => (
-       <Badge key={tag} variant='secondary'>
-        {tag}
-       </Badge>
-      ))}
-     </div>
-    </div>
-   </CardHeader>
-   <CardContent>
-    <p className='text-sm text-muted-foreground line-clamp-2'>
-     {entry.content}
-    </p>
-   </CardContent>
-  </Card>
+    </CardHeader>
+   </Card>
+  </Link>
  );
 }
 
@@ -234,7 +250,7 @@ export function EntryHistory({ type, entries }: EntryHistoryProps) {
    <div className='flex flex-col gap-4'>
     <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
      <h2 className='text-xl font-semibold'>
-      {type === 'journal' ? 'Previous Entries' : 'Transcription History'}
+      {type === 'journal' ? 'Todays Entries' : 'Transcription History'}
      </h2>
      <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-4'>
       <div className='relative flex-1 sm:flex-none'>

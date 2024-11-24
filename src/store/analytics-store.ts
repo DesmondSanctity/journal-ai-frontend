@@ -38,7 +38,6 @@ export const useAnalyticsStore = create<AnalyticsState>()(
      },
     });
     const analytics = await response.json();
-    console.log('Fetched entries from API:', analytics);
     set({ analytics: analytics.data });
    },
   }),
