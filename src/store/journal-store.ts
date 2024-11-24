@@ -42,7 +42,6 @@ export const useJournalStore = create<JournalState>()(
    },
 
    fetchEntryById: async (id: string) => {
-    const token = useAuthStore.getState().token;
     // find the entry with the given id
     const foundEntry = useJournalStore
      .getState()
