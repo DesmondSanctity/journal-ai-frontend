@@ -32,6 +32,7 @@ export const useJournalStore = create<JournalState>((set) => ({
    },
   });
   const entries = await response.json();
+  console.log('Fetched entries from API:', entries);
   set({ entries });
  },
 }));
