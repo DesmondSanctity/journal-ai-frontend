@@ -8,18 +8,6 @@ import { useAuthStore } from '@/store/auth-store';
 import { formatDistanceToNow } from 'date-fns';
 import { useJournalStore } from '@/store/journal-store';
 
-const mockUserData = {
- name: 'Alex Johnson',
- email: 'alex@example.com',
- role: 'user',
- joinedDate: 'January 2024',
- stats: {
-  totalJournals: 45,
-  totalTime: '38.5 hours',
-  lastActive: '2 hours ago',
- },
-};
-
 export default function ProfilePage() {
  const user = useAuthStore((state) => state.user);
  const entries = useJournalStore((state) => state.entries);

@@ -4,7 +4,6 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTranscriptionStore } from '@/store/transcription-store';
 import { Mic, Square, AudioWaveform, Play, Send, Pause } from 'lucide-react';
-import { saveAudioFile } from '@/lib/file';
 
 export function AudioRecorder() {
  const mediaRecorder = useRef<MediaRecorder | null>(null);
