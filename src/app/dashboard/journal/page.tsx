@@ -25,6 +25,8 @@ export default function JournalPage() {
     })
   : [];
 
+  console.log("Today's entries:", todayEntries);
+
  useEffect(() => {
   fetchEntries();
  }, [fetchEntries]);
