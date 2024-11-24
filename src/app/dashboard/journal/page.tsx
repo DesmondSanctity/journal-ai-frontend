@@ -10,7 +10,7 @@ import { useJournalStore } from '@/store/journal-store';
 
 export default function JournalPage() {
  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
- const { entries = [] } = useJournalStore.getState();
+ const entries = useJournalStore((state) => state.entries);
 
  // Filter entries for today
  const todayEntries = Array.isArray(entries)
@@ -24,6 +24,8 @@ export default function JournalPage() {
      );
     })
   : [];
+
+  console.log('Today&apos;s entries:', todayEntries);
 
  return (
   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>

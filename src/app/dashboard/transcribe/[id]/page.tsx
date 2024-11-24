@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, Tag, FileText, ListChecks, ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useJournalStore } from '@/store/journal-store';
 
 const mockTranscript = {
  id: '1',
@@ -23,6 +25,16 @@ const mockTranscript = {
 };
 
 export default function TranscriptPage() {
+ const params = useParams();
+ const journalId = params.id as string;
+ const entry = useJournalStore((state) =>
+  state.entries.find((entry) => entry.id === journalId)
+ );
+
+ if (!entry) {
+  return <div>Entry not found</div>;
+ }
+
  return (
   <div>
    <div className='mb-8'>
@@ -39,7 +51,7 @@ export default function TranscriptPage() {
      <h1 className='text-3xl font-bold'>{mockTranscript.title}</h1>
      <div className='flex items-center gap-2 text-muted-foreground'>
       <Clock className='h-4 w-4' />
-      <span>{Math.floor(mockTranscript.duration / 60)} minutes</span>
+      <span>{Math.floor(entry.duration / 60)} minutes</span>
      </div>
     </div>
 
@@ -53,13 +65,13 @@ export default function TranscriptPage() {
      <TabsContent value='transcript'>
       <Card>
        <CardContent className='pt-6'>
-        {mockTranscript.segments.map((segment, index) => (
+        {entry.segments.map((segment, index) => (
          <div
           key={index}
           className='flex gap-4 py-2 hover:bg-muted/50 rounded-lg px-2'
          >
           <span className='text-sm text-muted-foreground w-20'>
-           {new Date(segment.timestamp * 1000).toISOString().substr(14, 5)}
+           {segment.timestamp}
           </span>
           <p className='flex-1'>{segment.text}</p>
          </div>
@@ -76,7 +88,7 @@ export default function TranscriptPage() {
         </CardTitle>
        </CardHeader>
        <CardContent>
-        <p className='leading-7'>{mockTranscript.summary}</p>
+        <p className='leading-7'>{entry.summary}</p>
        </CardContent>
       </Card>
      </TabsContent>
@@ -89,7 +101,7 @@ export default function TranscriptPage() {
           <Tag className='h-4 w-4' /> Tags
          </div>
          <div className='flex gap-2'>
-          {mockTranscript.tags.map((tag) => (
+          {entry.tags.map((tag) => (
            <Badge key={tag} variant='secondary'>
             {tag}
            </Badge>

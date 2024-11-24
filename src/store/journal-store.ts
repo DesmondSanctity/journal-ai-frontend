@@ -1,6 +1,7 @@
 import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { useAuthStore } from './auth-store';
+import { persist } from 'zustand/middleware';
 
 interface JournalState {
  entries: Array<{
@@ -21,18 +22,38 @@ interface JournalState {
  fetchEntries: () => Promise<void>;
 }
 
-export const useJournalStore = create<JournalState>((set) => ({
- entries: [],
- fetchEntries: async () => {
-  const token = useAuthStore.getState().token;
+export const useJournalStore = create<JournalState>()(
+ persist(
+  (set) => ({
+   entries: [],
+   entry: {},
 
-  const response = await fetch(`${API_URL}/journal`, {
-   headers: {
-    Authorization: `Bearer ${token}`,
+   fetchEntries: async () => {
+    const token = useAuthStore.getState().token;
+
+    const response = await fetch(`${API_URL}/journal`, {
+     headers: {
+      Authorization: `Bearer ${token}`,
+     },
+    });
+    const entries = await response.json();
+    console.log('Fetched entries from API:', entries);
+    set({ entries: entries.data });
    },
-  });
-  const entries = await response.json();
-  console.log('Fetched entries from API:', entries);
-  set({ entries });
- },
-}));
+
+   fetchEntryById: async (id: string) => {
+    const token = useAuthStore.getState().token;
+    // find the entry with the given id
+    const foundEntry = useJournalStore
+     .getState()
+     .entries.find((entry) => entry.id === id);
+    if (foundEntry) {
+     set((state) => ({ ...state, currentEntry: foundEntry }));
+    }
+   },
+  }),
+  {
+   name: 'journal-storage',
+  }
+ )
+);

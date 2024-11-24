@@ -1,6 +1,7 @@
 import { API_URL } from '@/constants';
 import { create } from 'zustand';
 import { useAuthStore } from './auth-store';
+import { persist } from 'zustand/middleware';
 
 interface AnalyticsState {
  analytics: {
@@ -15,27 +16,34 @@ interface AnalyticsState {
  fetchAnalytics: () => Promise<void>;
 }
 
-export const useAnalyticsStore = create<AnalyticsState>((set) => ({
- analytics: {
-  totalTime: 0,
-  totalEntries: 0,
-  averageDuration: 0,
-  topTags: [],
-  topTopics: [],
-  wordFrequency: [],
-  sentimentData: [],
- },
-
- fetchAnalytics: async () => {
-  const token = useAuthStore.getState().token;
-
-  const response = await fetch(`${API_URL}/analytics`, {
-   headers: {
-    Authorization: `Bearer ${token}`,
+export const useAnalyticsStore = create<AnalyticsState>()(
+ persist(
+  (set) => ({
+   analytics: {
+    totalTime: 0,
+    totalEntries: 0,
+    averageDuration: 0,
+    topTags: [],
+    topTopics: [],
+    wordFrequency: [],
+    sentimentData: [],
    },
-  });
-  const analytics = await response.json() as AnalyticsState['analytics'];
-  console.log('Fetched entries from API:', analytics);
-  set({ analytics });
- },
-}));
+
+   fetchAnalytics: async () => {
+    const token = useAuthStore.getState().token;
+
+    const response = await fetch(`${API_URL}/analytics`, {
+     headers: {
+      Authorization: `Bearer ${token}`,
+     },
+    });
+    const analytics = await response.json();
+    console.log('Fetched entries from API:', analytics);
+    set({ analytics: analytics.data });
+   },
+  }),
+  {
+   name: 'journal-storage',
+  }
+ )
+);
